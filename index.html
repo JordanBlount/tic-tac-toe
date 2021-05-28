@@ -9,35 +9,75 @@
     <script src="scripts.js"></script>
 </head>
 <body>
-    <div class="site-content">
-        <div class="board">
-            <div class="space" data-x="0" data-y="0">
-                <p class="x">X</p>
+    <div class="site">
+        <nav>
+            <div class="nav-bar">
+                <h1 class="game-title">Tic Tac Toe</h1>
             </div>
-            <div class="space" data-x="0" data-y="1">
-                <p class="x">X</p>
+        </nav>
+        <div class="main-content">
+            <div class="game-selection">
+                <h1 class="selection__title">Select your opponent</h1>
+                <div class="player__select">
+                    <button class="player__btn">Player 1</h2>
+                    <button class="player__btn opponent">Player 2</h2>
+                    <!-- <div class="player1">
+                        <button class="player_btn">Player 1</h2>
+                    </div>
+                    <div class="player2">
+                        <button class="player_btn opponent">Player 2</h2>
+                    </div> -->
+                </div>
+                <div class="start-game">
+                    <button class="start-btn game-btn">Start</button>
+                </div>
             </div>
-            <div class="space" data-x="0" data-y="2">
-                <p class="x">X</p>
+            <div class="player-board">
+                <div class="player">
+                    <h2 class="player__name">Player 1</h2>
+                </div>
+                <div class="player">
+                    <h2 class="player__name">Player 2</h2>
+                </div>
             </div>
-            <div class="space" data-x="1" data-y="0">
-                <p class="x">X</p>
+            <div class="display">
+                <p class="display-text">
+                    Player 1 wins!
+                </p>
             </div>
-            <div class="space" data-x="1" data-y="1">
-                <p class="x">X</p>
+            <div class="board">
+                <div class="space" data-x="0" data-y="0">
+                    <p class="x">X</p>
+                </div>
+                <div class="space" data-x="0" data-y="1">
+                    <p class="x">X</p>
+                </div>
+                <div class="space" data-x="0" data-y="2">
+                    <p class="x">X</p>
+                </div>
+                <div class="space" data-x="1" data-y="0">
+                    <p class="x">X</p>
+                </div>
+                <div class="space" data-x="1" data-y="1">
+                    <p class="x">X</p>
+                </div>
+                <div class="space" data-x="1" data-y="2">
+                    <p class="x">X</p>
+                </div>
+                <div class="space" data-x="2" data-y="0">
+                    <p class="x">X</p>
+                </div>
+                <div class="space" data-x="2" data-y="1">
+                    <p class="x">X</p>
+                </div>
+                <div class="space" data-x="2" data-y="2">
+                    <p class="x">X</p>
+                </div>
             </div>
-            <div class="space" data-x="1" data-y="2">
-                <p class="x">X</p>
-            </div>
-            <div class="space" data-x="2" data-y="0">
-                <p class="x">X</p>
-            </div>
-            <div class="space" data-x="2" data-y="1">
-                <p class="x">X</p>
-            </div>
-            <div class="space" data-x="2" data-y="2">
-                <p class="x">X</p>
-            </div>
+            <div class="btns">
+                <button class="gameBtn">New Round</button>
+                <button class="gameBtn">New Game</button>
+            </div>            
         </div>
     </div>
 </body>
