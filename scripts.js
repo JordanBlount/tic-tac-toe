@@ -35,8 +35,8 @@ const Player = (name, piece, turn) => {
     }
 }
 
-let player1 = Player("Player 1", "x", 1);
-let player2 = Player("Player 2", "o", 2);
+let player1 = Player("Player 1", "X", 1);
+let player2 = Player("Player 2", "O", 2);
 
 // Game Board
 // 1 2 3
@@ -77,11 +77,12 @@ function test() {
 
 
 const gameboard = (function(doc) {   
-    let _board = [[1, 2, 3], 
-                 [4, 5, 6], 
-                 [7, 8, 9]];
+    // let _board = [[1, 2, 3], 
+    //              [4, 5, 6], 
+    //              [7, 8, 9]];
+    let _board = [[],[],[]];
 
-    let _spaces = doc.querySelectorAll("spaces");
+    let _spaces = doc.querySelectorAll("space");
 
     const getBoard = () => {
         return _board;
@@ -91,15 +92,29 @@ const gameboard = (function(doc) {
         _spaces.forEach(function(space) {
             let x = space.dataset.x;
             let y = space.dataset.y;
-            space.addEventListener('click', game.makeMove(x, y));
+            space.addEventListener('click', game.makeMove(x, y, space));
         });
+    }
+
+    const addPiece = (space, sign, x, y) => {
+        let mark = document.createElement("p");
+        mark.textContent = sign;
+        mark.classList.add(sign)
+        space.appendChild(sign);   
+        _board[x][y] = sign;     
+    }
+
+    const reset = () => {
+        _board = [[],[],[]]; 
+        setBoard();
     }
 
     return {
         getBoard, 
-        setBoard 
+        setBoard,
+        addPiece
     }
-})();
+})(document);
 
 
 const game = (function(player1, player2) {
@@ -127,9 +142,31 @@ const game = (function(player1, player2) {
         }
     }
 
-    const makeMove = (x, y) => {
-        if(position !== 0) {
+    const makeMove = (x, y, space) => {
+        let winner = getWinner(gameboard);
+        if(winner !== false) {
+            // TODO: Game over. Someone won.
+        } 
+        if(isTie()) {
+            // TODO: Game over. Tied
+        }
+        if(x !== 0 && y !== 0) {
+            if(gameboard.getBoard[x][y] === "") {
+                addPiece(space, _playerTurn.getPiece(), x, y);
+                _currentTurn();
+            }
+        }
+    }
 
+    const _playerTurn = () => {
+        return player1.getTurn === _currentTurn ? player1 : player2;
+    }
+
+    const _changeTurn = () => {
+        if(_currentTurn === 1) {
+            _currentTurn = 2;
+        } else {
+            _currentTurn = 1;
         }
     }
 
@@ -168,7 +205,12 @@ const game = (function(player1, player2) {
     const reset = () => {
         player1.getSpaces() = [];
         player2.getSpaces() = [];
+
+        // Choose player who will start next game
+        setTurn(player1, player2);
+
         // New game with same board?
+        gameboard.reset();
 
         // Return to start menu
     }
@@ -178,6 +220,23 @@ const game = (function(player1, player2) {
         isTie
     }
 })();
+
+const displayController = (function(doc) {
+
+    const newScreen = () => {
+        // Go back to home screen. This should happen once 
+        // everything has been reset completely or if choosen
+    }
+
+    const reset = () => {
+        
+    }
+
+    return {
+       newScreen 
+    }
+
+})(document);
 
 function start() {
 
