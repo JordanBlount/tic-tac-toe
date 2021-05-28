@@ -36,7 +36,6 @@ const Player = (name, piece, turn) => {
 }
 
 let player1 = Player("Player 1", "x", 1);
-
 let player2 = Player("Player 2", "o", 2);
 
 // Game Board
@@ -77,30 +76,47 @@ function test() {
 }
 
 
-const gameboard = (function(doc) {
-    
-    
-    let board = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+const gameboard = (function(doc) {   
+    let _board = [[1, 2, 3], 
+                 [4, 5, 6], 
+                 [7, 8, 9]];
 
+    let _spaces = doc.querySelectorAll("spaces");
 
     const getBoard = () => {
-        return board;
+        return _board;
+    }
+
+    const setBoard = () => {
+        _spaces.forEach(function(space) {
+            let x = space.dataset.x;
+            let y = space.dataset.y;
+            space.addEventListener('click', game.makeMove(x, y));
+        });
     }
 
     return {
-        getBoard  
+        getBoard, 
+        setBoard 
     }
-})(document);
+})();
+
 
 const game = (function(player1, player2) {
     // The winning combinations
     let _winningCombos = [[1, 2, 3], [4, 5, 6], [7, 8, 9], 
-                    [1, 4, 7], [2, 5, 8], [3, 6, 9], 
-                    [1, 5, 9], [7, 5, 3]];
+                          [1, 4, 7], [2, 5, 8], [3, 6, 9], 
+                          [1, 5, 9], [7, 5, 3]];
 
     let _currentTurn = 0;
 
+    const init = () => {
+        setTurn(player1, player2);
+        gameboard.setBoard();
+    }
+
     const setTurn = (player1, player2) => {
+        // TODO: Check if range is equal to: 1 - 2
         let turn = Math.floor(Math.random() * (2 - 1) + 1) - 1;
         if(turn === 1) {
             player1.setTurn(turn);
@@ -108,6 +124,12 @@ const game = (function(player1, player2) {
         } else {
             player2.setTurn(turn);
             player1.setTurn(1);
+        }
+    }
+
+    const makeMove = (x, y) => {
+        if(position !== 0) {
+
         }
     }
 
@@ -143,8 +165,20 @@ const game = (function(player1, player2) {
         }
     }
 
+    const reset = () => {
+        player1.getSpaces() = [];
+        player2.getSpaces() = [];
+        // New game with same board?
+
+        // Return to start menu
+    }
+
     return {
         getWinner,
         isTie
     }
-})(player1, player2);
+})();
+
+function start() {
+
+}
