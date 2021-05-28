@@ -118,7 +118,6 @@ const gameboard = (function(doc) {
 
 
 const game = (function(player1, player2) {
-    // The winning combinations
     let _winningCombos = [[1, 2, 3], [4, 5, 6], [7, 8, 9], 
                           [1, 4, 7], [2, 5, 8], [3, 6, 9], 
                           [1, 5, 9], [7, 5, 3]];
@@ -222,18 +221,70 @@ const game = (function(player1, player2) {
 })();
 
 const displayController = (function(doc) {
+    let _newGameScreen = doc.querySelector('game-selection');
 
-    const newScreen = () => {
+    let _playerBoard = doc.querySelector('player-board');
+    let _display = doc.querySelector('display');
+    let _board = doc.querySelector('board');
+    let _gameBtns = doc.querySelector('btns');
+
+    let _opponent = doc.querySelector('opponent');
+    let _start = doc.querySelector('start-btn');
+
+    const openNewGameScreen = () => {
         // Go back to home screen. This should happen once 
         // everything has been reset completely or if choosen
+        _newGameScreen.style.display = "block";
+
+        _playerBoard.style.display = "none";
+        _display.style.display = "none";
+        _board.style.display = "none";
+        _gameBtns.style.display = "none";
+
+        _opponent.addEventListener('click', _changeOpponent);
+        _start.addEventListener('click', _startGame);
+    }
+
+    const openGameScreen = () => {
+        _newGameScreen.style.display = "none";
+
+        _playerBoard.style.display = "flex";
+        _display.style.display = "block";
+        _board.style.display = "grid";
+        _gameBtns.style.display = "block";        
+    }
+
+    const setDisplay = text => {
+        _display.textContent = text;
+    }
+
+    const displayWinner = () => {
+        _display.classList.add('won');
     }
 
     const reset = () => {
-        
+        setDisplay('');
+        _display.classList.remove('won');           
+    }
+
+    const _changeOpponent = () => {
+        let name = _opponent.textContent.toUpperCase();
+        if(name === "PLAYER 2") {
+            name.textContent = "AI";
+        } else {
+            name.textContent = "Player 2";
+        }
+    }
+
+    const _startGame = () => {
+        game.init();
     }
 
     return {
-       newScreen 
+       openNewGameScreen,
+       openGameScreen,
+       setDisplay,
+       displayWinner 
     }
 
 })(document);
