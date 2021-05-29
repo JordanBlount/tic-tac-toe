@@ -27,6 +27,7 @@ const game = (function() {
     const start = () => {
         _player1 = Player("Player 1", "x");
         _player2 = Player("Player 2", "o");
+        gameBoard.setBoard();
         display.setTurn(_player2Turn);
     }
 
@@ -57,12 +58,26 @@ const game = (function() {
         // place mark
         gameBoard.addMark(space, player);
 
-
+        // check for winner
+        if(checkIfWon(player)) {
+            console.log("You won!");
+        }
         
         // change turns
         changeTurns();
         display.setTurn(_getTurn());
     }
+
+    const checkIfWon = (player) => {
+        let mark = player.getMark();
+        console.log(mark);
+        let spaces = gameBoard.getSpaces();
+        return  _winningCombos.some(comb => {
+            return comb.every(index => {
+                return spaces[index].classList.contains(mark);
+            })     
+        });
+    }   
 
     return {
         start,
@@ -75,21 +90,28 @@ const game = (function() {
 const gameBoard = (function(doc) {
     let _spaces = doc.querySelectorAll('[data-space]');
 
+    const getSpaces = () => _spaces;
+
     const spaceClicked = (e) => {
         const space = e.target;
         game.makeMove(space);
     }
 
     const addMark = (space, player) => {
+        console.log("Add mark " + player.getMark());
         space.classList.add(player.getMark());
     }
 
-    _spaces.forEach(space => {
-        space.addEventListener('click', spaceClicked, {once: true});
-    });
+    const setBoard = () => {
+        _spaces.forEach(space => {
+            space.addEventListener('click', spaceClicked, {once: true});
+        });
+    }
 
     return {
-        addMark
+        getSpaces,
+        addMark,
+        setBoard
     }
 })(document);
 
