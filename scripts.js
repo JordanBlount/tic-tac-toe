@@ -24,10 +24,13 @@ const game = (function() {
     let _player2Turn = false;
 
     const start = () => {
+        _player2Turn = false;
         _player1 = Player("Player 1", "x");
         _player2 = Player("Player 2", "o");
         gameBoard.setBoard();
         display.setTurn(_player2Turn);
+        display.closeResultScreen();
+        display.resetButton();
     }
 
     const _getTurn = () => {
@@ -59,12 +62,17 @@ const game = (function() {
 
         // check for winner
         if(checkIfWon(player)) {
-            console.log("You won!");
+            gameOver(player, false);
+        } else if (isDraw()) {
+            gameOver(player, true);
+        } else {
+            changeTurns();
+            display.setTurn(_getTurn());
         }
-        
-        // change turns
-        changeTurns();
-        display.setTurn(_getTurn());
+    }
+
+    const gameOver = (player, isDraw) => {
+        display.openResultScreen(player, isDraw);    
     }
 
     const checkIfWon = (player) => {
@@ -75,11 +83,23 @@ const game = (function() {
                 return spaces[index].classList.contains(mark);
             })     
         });
-    }   
+    }  
+    
+    const isDraw = () => {
+        return [...gameBoard.getSpaces()].every(space => {
+            return space.classList.contains(_player1.getMark()) 
+            || space.classList.contains(_player2.getMark());
+        });
+    }
+
+    const getMarks = () => {
+        return [_player1.getMark(), _player2.getMark()];
+    }
 
     return {
         start,
-        makeMove
+        makeMove,
+        getMarks
     }   
 
 })();
@@ -101,6 +121,10 @@ const gameBoard = (function(doc) {
 
     const setBoard = () => {
         _spaces.forEach(space => {
+            space.classList.remove(game.getMarks()[0]);
+            space.classList.remove(game.getMarks()[1]);
+            space.removeEventListener('click', spaceClicked);
+            console.log("TEST");
             space.addEventListener('click', spaceClicked, {once: true});
         });
     }
@@ -118,11 +142,28 @@ const display = (function(doc) {
     let _player1 = doc.getElementById("player1");
     let _player2 = doc.getElementById("player2");
 
+    let resultMessage = doc.getElementById("result-message");
+    let resultScreen = doc.getElementById("result-screen");
+    let resetBtn = doc.getElementById("reset");
+
     // Welcome Screen
 
     // Game Screen
 
     // Result Screen
+    const openResultScreen = (player, draw) => {
+        if(draw) {
+            resultMessage.innerHTML = "Issa draw!"
+        } else {
+            resultMessage.innerHTML = `${player.getName()} won!`
+        }
+        resultScreen.classList.add('show');
+    }
+
+    const closeResultScreen = () => {
+        resultMessage.innerHTML = "If you seeing this, you playing";
+        resultScreen.classList.remove('show');
+    }
 
     const setTurn = (turn) => {
         _player1.classList.remove('myTurn');
@@ -133,9 +174,23 @@ const display = (function(doc) {
             _player1.classList.add('myTurn');
         }
     }
+    
+    const resetButton = () => {
+        // I tried to declare this without writing the
+        // entire function out and it would mess up complete
+        // resetBtn.addEventListener('click', game.start());
+        // It seems that this will automatically call the method
+        // at least one time before instead of just listening
+        resetBtn.addEventListener('click', function() {
+            game.start();
+        });
+    }
 
     return {
-        setTurn
+        setTurn,
+        openResultScreen,
+        closeResultScreen,
+        resetButton
     }
 
 })(document);
@@ -145,29 +200,3 @@ start();
 function start() {
     game.start();
 }
-
-
-// const getWinner = (board) => {
-//     let p1Moves = player1.getSpaces();
-//     let p2Moves = player2.getSpaces();
-//     for (let i = 0; i < _winningCombos.length; i++) {
-//         let combo = _winningCombos[i];
-//         if(combo.every(piece => p1Moves.includes(piece))) {
-//             return player1;
-//         }
-//         if(combo.every(piece => p2Moves.includes(piece))) {
-//             return player2;
-//         }
-//     }
-//     return false;
-// }
-
-// const isTie = () => {
-//     let p1Moves = player1.getSpaces();
-//     let p2Moves = player2.getSpaces();
-//     if(p1Moves.length >- 4 && p2Moves.length >= 4) {
-//         return true;
-//     } else {
-//         return false;
-//     }
-// }
