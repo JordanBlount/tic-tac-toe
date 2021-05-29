@@ -14,9 +14,8 @@ const Player = (name, mark) => {
 
 const game = (function() {
 
-    let _winningCombos = [[1, 2, 3], [4, 5, 6], [7, 8, 9], 
-    [1, 4, 7], [2, 5, 8], [3, 6, 9], 
-    [1, 5, 9], [7, 5, 3]];
+    let _winningCombos = [[0, 1, 2], [3, 4, 5], [6, 7, 8], 
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [6, 4, 2]];
 
     // Start as nothing
     let _player1 = null;
@@ -70,7 +69,6 @@ const game = (function() {
 
     const checkIfWon = (player) => {
         let mark = player.getMark();
-        console.log(mark);
         let spaces = gameBoard.getSpaces();
         return  _winningCombos.some(comb => {
             return comb.every(index => {
@@ -98,7 +96,6 @@ const gameBoard = (function(doc) {
     }
 
     const addMark = (space, player) => {
-        console.log("Add mark " + player.getMark());
         space.classList.add(player.getMark());
     }
 
