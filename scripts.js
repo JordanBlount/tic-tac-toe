@@ -63,6 +63,7 @@ const game = (function() {
         // check for winner
         if(checkIfWon(player)) {
             gameOver(player, false);
+        // check for draw
         } else if (isDraw()) {
             gameOver(player, true);
         } else {
@@ -147,6 +148,12 @@ const display = (function(doc) {
     let resetBtn = doc.getElementById("reset");
 
     // Welcome Screen
+    const openWelcomeScreen = () => {
+        // This needs to get the player name and
+        // if the player is playing against a computer
+
+
+    }
 
     // Game Screen
 
