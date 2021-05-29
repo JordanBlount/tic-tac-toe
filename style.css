@@ -167,6 +167,7 @@ nav {
 
 .opponent:active {
     transition: ease-out 10ms;
+    transform: scale(1);
     background-color: hsl(60, 4%, 40%);
     cursor: pointer;
 }

@@ -1,5 +1,7 @@
-const Player = (name, piece, turn) => {
+const Player = (name, piece) => {
     let _spaces = [];
+    let turn = 0;
+
 
     const addSpace = (piece) => {
         return _spaces.push(piece);
@@ -21,6 +23,10 @@ const Player = (name, piece, turn) => {
         return turn;
     }
 
+    const setTurn = (x) => {
+        turn = x;
+    }
+
     const isMyTurn = value => {
         return value === turn;
     } 
@@ -31,6 +37,7 @@ const Player = (name, piece, turn) => {
         getSpaces,
         getPiece,
         getTurn,
+        setTurn,
         isMyTurn
     }
 }
@@ -82,14 +89,15 @@ const gameboard = (function(doc) {
     //              [7, 8, 9]];
     let _board = [[],[],[]];
 
-    let _spaces = doc.querySelectorAll("space");
+    let _spaces = doc.querySelectorAll(".space");
 
     const getBoard = () => {
         return _board;
     }
 
     const setBoard = () => {
-        _spaces.forEach(function(space) {
+        console.log(_spaces);
+        _spaces.forEach(space => {
             let x = space.dataset.x;
             let y = space.dataset.y;
             space.addEventListener('click', game.makeMove(x, y, space));
@@ -130,29 +138,35 @@ const game = (function(player1, player2) {
     }
 
     const setTurn = (player1, player2) => {
-        // TODO: Check if range is equal to: 1 - 2
-        let turn = Math.floor(Math.random() * (2 - 1) + 1) - 1;
+        let min = Math.ceil(1);
+        let max = Math.floor(2);
+        let turn = Math.floor(Math.random() * (max - min + 1)) + min;
+        console.log("Turn " + turn);
         if(turn === 1) {
             player1.setTurn(turn);
             player2.setTurn(2);
+            displayController.setDisplay(`${player1.getName} is first!`);
         } else {
             player2.setTurn(turn);
             player1.setTurn(1);
+            displayController.setDisplay(`${player1.getName} is first!`);
         }
     }
 
     const makeMove = (x, y, space) => {
+        console.log("Able to click");
         let winner = getWinner(gameboard);
         if(winner !== false) {
             // TODO: Game over. Someone won.
-        } 
-        if(isTie()) {
+        } else if (isTie()) {
             // TODO: Game over. Tied
         }
         if(x !== 0 && y !== 0) {
-            if(gameboard.getBoard[x][y] === "") {
+            console.log("REACHED");
+            console.log(gameboard.getBoard())
+            if(gameboard.getBoard()[x][y] === "") {
                 addPiece(space, _playerTurn.getPiece(), x, y);
-                _currentTurn();
+                _changeTurn();
             }
         }
     }
@@ -167,6 +181,8 @@ const game = (function(player1, player2) {
         } else {
             _currentTurn = 1;
         }
+        displayController.setDisplay(`${_currentTurn === player1.getTurn() ? player1.getName()
+        : player2.getName()}'s turn!`);
     }
 
     const getWinner = (board) => {
@@ -174,15 +190,10 @@ const game = (function(player1, player2) {
         let p2Moves = player2.getSpaces();
         for (let i = 0; i < _winningCombos.length; i++) {
             let combo = _winningCombos[i];
-            console.log(combo);
             if(combo.every(piece => p1Moves.includes(piece))) {
-                console.log(p1Moves);
-                console.log("Player 1 is the winner");
                 return player1;
             }
             if(combo.every(piece => p2Moves.includes(piece))) {
-                console.log(p2Moves);
-                console.log("Player 2 is the winner");
                 return player2;
             }
         }
@@ -192,8 +203,6 @@ const game = (function(player1, player2) {
     const isTie = () => {
         let p1Moves = player1.getSpaces();
         let p2Moves = player2.getSpaces();
-        console.log(p1Moves);
-        console.log(p2Moves);
         if(p1Moves.length >- 4 && p2Moves.length >= 4) {
             return true;
         } else {
@@ -205,31 +214,35 @@ const game = (function(player1, player2) {
         player1.getSpaces() = [];
         player2.getSpaces() = [];
 
-        // Choose player who will start next game
-        setTurn(player1, player2);
-
         // New game with same board?
         gameboard.reset();
-
+        displayController.reset();
         // Return to start menu
     }
 
     return {
         getWinner,
-        isTie
+        makeMove,
+        isTie,
+        init
     }
-})();
+})(player1, player2);
 
 const displayController = (function(doc) {
-    let _newGameScreen = doc.querySelector('game-selection');
+    let _newGameScreen = doc.querySelector('.game-selection');
 
-    let _playerBoard = doc.querySelector('player-board');
-    let _display = doc.querySelector('display');
-    let _board = doc.querySelector('board');
-    let _gameBtns = doc.querySelector('btns');
+    let _playerBoard = doc.querySelector('.player-board');
+    let _display = doc.querySelector('.display');
+    let _board = doc.querySelector('.board');
+    let _gameBtns = doc.querySelector('.btns');
 
-    let _opponent = doc.querySelector('opponent');
-    let _start = doc.querySelector('start-btn');
+    let _opponent = doc.querySelector('.opponent');
+    let _start = doc.querySelector('.start-btn');
+
+    const gameSetup = () => {
+        _opponent.addEventListener('click', _changeOpponent);
+        _start.addEventListener('click', _startGame);       
+    }
 
     const openNewGameScreen = () => {
         // Go back to home screen. This should happen once 
@@ -251,7 +264,10 @@ const displayController = (function(doc) {
         _playerBoard.style.display = "flex";
         _display.style.display = "block";
         _board.style.display = "grid";
-        _gameBtns.style.display = "block";        
+        _gameBtns.style.display = "block";   
+
+        _opponent.removeEventListener('click', _changeOpponent);     
+        _start.removeEventListener('click', _startGame);     
     }
 
     const setDisplay = text => {
@@ -269,18 +285,21 @@ const displayController = (function(doc) {
 
     const _changeOpponent = () => {
         let name = _opponent.textContent.toUpperCase();
+        console.log(name);
         if(name === "PLAYER 2") {
-            name.textContent = "AI";
+            _opponent.textContent = "AI";
         } else {
-            name.textContent = "Player 2";
+            _opponent.textContent = "Player 2";
         }
     }
 
     const _startGame = () => {
+        openGameScreen();
         game.init();
     }
 
     return {
+       gameSetup,
        openNewGameScreen,
        openGameScreen,
        setDisplay,
@@ -290,5 +309,6 @@ const displayController = (function(doc) {
 })(document);
 
 function start() {
-
+    displayController.openNewGameScreen();
 }
+
