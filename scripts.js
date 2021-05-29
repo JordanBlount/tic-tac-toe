@@ -125,7 +125,6 @@ const gameBoard = (function(doc) {
             space.classList.remove(game.getMarks()[0]);
             space.classList.remove(game.getMarks()[1]);
             space.removeEventListener('click', spaceClicked);
-            console.log("TEST");
             space.addEventListener('click', spaceClicked, {once: true});
         });
     }
